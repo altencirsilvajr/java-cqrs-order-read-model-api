@@ -1,0 +1,1 @@
+package dev.altencir.orders.read; import java.util.UUID; import org.springframework.data.jpa.repository.JpaRepository; public interface OrderSummaryRepository extends JpaRepository<OrderSummaryEntity,UUID>{}

@@ -20,6 +20,13 @@ app:
       url: ${WRITE_DB_URL:jdbc:postgresql://localhost:5432/orders_write}
       username: ${WRITE_DB_USER:orders}
       password: ${WRITE_DB_PASSWORD:orders}
+    read:
+      url: ${READ_DB_URL:jdbc:postgresql://localhost:5433/orders_read}
+      username: ${READ_DB_USER:orders}
+      password: ${READ_DB_PASSWORD:orders}
+  outbox:
+    batch-size: 50
+    fixed-delay: 250
 management:
   endpoints.web.exposure.include: health,info,metrics,prometheus
   endpoint.health.probes.enabled: true
