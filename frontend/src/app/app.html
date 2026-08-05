@@ -1,0 +1,41 @@
+<main>
+  <header>
+    <div><p class="eyebrow">JAVA 21 · SPRING BOOT · KAFKA</p><h1>CQRS order flow</h1></div>
+    <span class="pulse">live learning dashboard</span>
+  </header>
+
+  <section class="pipeline" aria-label="CQRS pipeline">
+    <article><small>01</small><strong>Write model</strong><span>PostgreSQL · authoritative</span></article>
+    <i>→</i><article><small>02</small><strong>Transactional outbox</strong><span>at-least-once relay</span></article>
+    <i>→</i><article><small>03</small><strong>Kafka</strong><span>OrderPlaced.v1</span></article>
+    <i>→</i><article><small>04</small><strong>Read model</strong><span>idempotent projection</span></article>
+  </section>
+
+  <section class="metrics">
+    <article><span>Accepted</span><b>{{ overview()?.acceptedOrders ?? '—' }}</b></article>
+    <article><span>Outbox pending</span><b>{{ overview()?.pendingOutbox ?? '—' }}</b></article>
+    <article><span>Published</span><b>{{ overview()?.publishedEvents ?? '—' }}</b></article>
+    <article><span>Projected</span><b>{{ overview()?.projectedOrders ?? '—' }}</b></article>
+  </section>
+
+  <section class="workspace">
+    <form (ngSubmit)="placeOrder()">
+      <h2>Place a demo order</h2>
+      <label>Customer <input name="customer" [(ngModel)]="customerId" required /></label>
+      <label>SKU <input name="sku" [(ngModel)]="sku" required /></label>
+      <div class="pair"><label>Quantity <input name="quantity" type="number" min="1" [(ngModel)]="quantity" /></label><label>Unit price <input name="price" type="number" min="0" step="0.01" [(ngModel)]="unitPrice" /></label></div>
+      <button [disabled]="busy()">{{ busy() ? 'Accepting…' : 'Create order' }}</button>
+      @if (error()) { <p class="error">{{ error() }}</p> }
+    </form>
+
+    <article class="status-card">
+      <h2>Projection status</h2>
+      @if (accepted()) {
+        <code>{{ accepted()?.orderId }}</code>
+        <div class="state" [class.projected]="status()?.state === 'PROJECTED'">{{ status()?.state ?? accepted()?.projectionState }}</div>
+        <dl><div><dt>Accepted</dt><dd>{{ status()?.acceptedAt | date:'medium' }}</dd></div><div><dt>Projected</dt><dd>{{ status()?.projectedAt ? (status()?.projectedAt | date:'medium') : 'waiting' }}</dd></div><div><dt>Lag</dt><dd>{{ status()?.lagMilliseconds ?? '—' }} ms</dd></div></dl>
+        <p>The command succeeds before this read model converges. That delay is behavior, not a UI bug.</p>
+      } @else { <p>Create an order to watch the outbox and projector converge.</p> }
+    </article>
+  </section>
+</main>
