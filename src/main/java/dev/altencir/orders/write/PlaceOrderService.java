@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PlaceOrderService {
     private final OrderRepository orders; private final OutboxEventRepository outbox; private final ObjectMapper json; private final Clock clock;
-    public PlaceOrderService(OrderRepository orders, OutboxEventRepository outbox, ObjectMapper json){this(orders,outbox,json,Clock.systemUTC());}
-    PlaceOrderService(OrderRepository orders, OutboxEventRepository outbox, ObjectMapper json, Clock clock){this.orders=orders;this.outbox=outbox;this.json=json;this.clock=clock;}
+    public PlaceOrderService(OrderRepository orders, OutboxEventRepository outbox, ObjectMapper json, Clock clock){this.orders=orders;this.outbox=outbox;this.json=json;this.clock=clock;}
     @Transactional("writeTransactionManager")
     public PlacedOrder place(String customerId, List<OrderItem> items) {
         var order=Order.place(customerId,items,clock.instant());

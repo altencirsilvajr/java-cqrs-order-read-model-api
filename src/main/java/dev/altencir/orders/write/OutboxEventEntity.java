@@ -7,11 +7,11 @@ import java.util.UUID;
 @Entity @Table(name="outbox_events")
 public class OutboxEventEntity {
     @Id private UUID id;
-    @Column(nullable=false) private UUID aggregateId;
-    @Column(nullable=false) private String eventType;
+    @Column(name="aggregate_id",nullable=false) private UUID aggregateId;
+    @Column(name="event_type",nullable=false) private String eventType;
     @Column(nullable=false, columnDefinition="text") private String payload;
-    @Column(nullable=false) private Instant occurredAt;
-    private Instant publishedAt;
+    @Column(name="occurred_at",nullable=false) private Instant occurredAt;
+    @Column(name="published_at") private Instant publishedAt;
     protected OutboxEventEntity() {}
     public OutboxEventEntity(UUID id, UUID aggregateId, String eventType, String payload, Instant occurredAt){this.id=id;this.aggregateId=aggregateId;this.eventType=eventType;this.payload=payload;this.occurredAt=occurredAt;}
     public void markPublished(Instant at){publishedAt=at;}
