@@ -1,0 +1,18 @@
+image: eclipse-temurin:21-jdk
+services: [docker:27-dind]
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+stages: [verify]
+verify:
+  stage: verify
+  before_script:
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
+    - apt-get install -y nodejs
+  script:
+    - ./scripts/traceability-gate.sh HEAD
+    - ./mvnw verify
+    - npm --prefix frontend ci
+    - npm --prefix frontend test -- --watch=false
+    - npm --prefix frontend run build

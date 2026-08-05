@@ -41,3 +41,7 @@ services:
       write-db: {condition: service_healthy}
       read-db: {condition: service_healthy}
       kafka: {condition: service_started}
+  frontend:
+    build: ./frontend
+    ports: ["4200:8080"]
+    depends_on: [api]

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cqrs-orders-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: cqrs-orders-api}
+  template:
+    metadata:
+      labels: {app: cqrs-orders-api}
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/altencirsilvajr/java-cqrs-order-read-model-api:latest
+          ports: [{containerPort: 8080}]
+          envFrom:
+            - configMapRef: {name: cqrs-orders-config}
+            - secretRef: {name: cqrs-orders-databases}
+          readinessProbe: {httpGet: {path: /actuator/health/readiness, port: 8080}, initialDelaySeconds: 20, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /actuator/health/liveness, port: 8080}, initialDelaySeconds: 30, periodSeconds: 15}
+          resources:
+            requests: {cpu: 200m, memory: 384Mi}
+            limits: {cpu: "1", memory: 768Mi}

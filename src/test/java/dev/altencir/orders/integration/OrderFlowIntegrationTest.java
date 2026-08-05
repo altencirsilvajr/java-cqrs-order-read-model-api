@@ -22,4 +22,5 @@ class OrderFlowIntegrationTest {
   assertThat(read.getStatusCode()).isEqualTo(HttpStatus.OK);assertThat(read.getBody()).containsEntry("customerId","customer-42");
   var status=http.getForEntity("/api/orders/"+id+"/projection-status",Map.class);assertThat(status.getBody()).containsEntry("state","PROJECTED");
  }
+ @Test void errorsUseProblemDetails(){var invalid=http.postForEntity("/api/orders",Map.of("customerId","","items",java.util.List.of()),Map.class);assertThat(invalid.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);assertThat(invalid.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);var missing=http.getForEntity("/api/orders/"+java.util.UUID.randomUUID(),Map.class);assertThat(missing.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);assertThat(missing.getBody()).containsEntry("type","urn:problem:resource-not-found");}
 }
